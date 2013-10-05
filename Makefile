@@ -1,10 +1,20 @@
 CC= g++
-CFLAGS= -g -O2 -shared -fPIC -I /usr/include/lua5.1/ -I/usr/local/include/mongo/
+CFLAGS= -g -O2
+INCLUDES=-I/usr/include/lua5.1/ -I/usr/local/include/mongo/
 AR= ar rcu
 RANLIB= ranlib
 RM= rm -f
-LIBS=-lmongoclient -lboost_thread -lboost_filesystem
+LIBS=-lmongoclient -lboost_thread-mt -lboost_filesystem-mt
 OUTLIB=mongo.so
+
+OS_NAME := $(shell uname -s)
+ifeq ($(OS_NAME),Darwin)
+	CFLAGS += -bundle -undefined dynamic_lookup
+else
+	CFLAGS += -shared -fPIC
+endif
+
+CFLAGS += $(INCLUDES)
 
 LDFLAGS= $(LIBS)
 
